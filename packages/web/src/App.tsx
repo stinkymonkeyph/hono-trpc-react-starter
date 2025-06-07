@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { trpc } from './lib/trpc'
+import { type User } from '../../shared/src/index.js';
 
 function App() {
   const [email, setEmail] = useState('')
@@ -165,7 +166,7 @@ function App() {
             ) : (
               <div className="space-y-3">
                 {users && users.length > 0 ? (
-                  users.map((user) => (
+                  users.map((user: User) => (
                     <div key={user.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
                       <div className="flex items-center space-x-4">
                         <div className="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">
