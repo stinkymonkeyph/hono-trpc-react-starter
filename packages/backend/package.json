@@ -1,0 +1,29 @@
+{
+  "name": "@starter/backend",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm run db:ensure && tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:ensure": "node scripts/ensure-db.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:setup": "npm run db:generate && npm run db:push"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.8.2",
+    "@hono/trpc-server": "^0.3.4",
+    "@prisma/client": "^5.7.1",
+    "@starter/shared": "*",
+    "@trpc/server": "^10.45.2",
+    "hono": "^3.12.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "prisma": "^5.7.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

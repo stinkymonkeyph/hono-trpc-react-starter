@@ -1,0 +1,21 @@
+{
+  "name": "hono-react-trpc-starter",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:web\"",
+    "dev:backend": "npm run dev --workspace=@starter/backend",  
+    "dev:web": "npm run dev --workspace=@starter/web",
+    "build": "npm run build --workspace=@starter/backend && npm run build --workspace=@starter/web",
+    "build:backend": "npm run build --workspace=backend",
+    "build:web": "npm run build --workspace=web",
+    "install:all": "npm install",
+    "clean": "rm -rf packages/*/node_modules packages/*/dist node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  }
+}
