@@ -1,0 +1,32 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY packages/web/package*.json ./packages/web/
+COPY packages/backend/package*.json ./packages/backend/
+
+# Install all dependencies (frontend + backend for types)
+RUN npm ci
+
+# Copy backend source for types
+COPY packages/backend/src ./packages/backend/src
+
+# Copy frontend source
+COPY packages/web ./packages/web
+
+# Create user and set permissions
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 frontend && \
+    chown -R frontend:nodejs /app
+
+USER frontend
+
+# Set working directory to web package
+WORKDIR /app/packages/web
+
+EXPOSE 5173
+
+# Development command with hot reload
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

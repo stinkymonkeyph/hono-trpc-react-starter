@@ -1,0 +1,35 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies for development
+RUN apk add --no-cache openssl openssl-dev libc6-compat
+
+# Copy package files
+COPY package*.json ./
+COPY packages/backend/package*.json ./packages/backend/
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci
+
+# Copy backend source
+COPY packages/backend ./packages/backend
+
+# Generate Prisma client
+WORKDIR /app/packages/backend
+RUN npx prisma generate
+
+# Create user and set permissions
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 backend && \
+    chown -R backend:nodejs /app
+
+USER backend
+
+# Go back to root for npm workspaces
+WORKDIR /app
+
+EXPOSE 3001
+
+# Development command with hot reload
+CMD ["npm", "run", "dev", "--workspace=packages/backend"]

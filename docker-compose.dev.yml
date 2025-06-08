@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # Backend development service
+  backend-dev:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile.dev
+    container_name: hono-backend-dev
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=file:./dev.db
+    volumes:
+      # Mount source code for hot reload
+      - ./packages/backend/src:/app/packages/backend/src
+      - ./packages/backend/prisma:/app/packages/backend/prisma
+      - ./packages/backend/package.json:/app/packages/backend/package.json
+      # Persist database
+      - backend_dev_data:/app/packages/backend/prisma
+      # Exclude node_modules from mounting (use container's version)
+      - /app/packages/backend/node_modules
+      - /app/node_modules
+    networks:
+      - app-network
+    restart: unless-stopped
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend development service
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile.dev
+    container_name: react-frontend-dev
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3001
+    volumes:
+      # Mount source code for hot reload
+      - ./packages/web/src:/app/packages/web/src
+      - ./packages/web/public:/app/packages/web/public
+      - ./packages/web/package.json:/app/packages/web/package.json
+      - ./packages/web/vite.config.ts:/app/packages/web/vite.config.ts
+      - ./packages/web/tailwind.config.js:/app/packages/web/tailwind.config.js
+      - ./packages/web/postcss.config.js:/app/packages/web/postcss.config.js
+      - ./packages/web/index.html:/app/packages/web/index.html
+      # Exclude node_modules from mounting
+      - /app/packages/web/node_modules
+      - /app/node_modules
+    networks:
+      - app-network
+    restart: unless-stopped
+    command: npm run dev -- --host 0.0.0.0
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      backend-dev:
+        condition: service_healthy
+
+volumes:
+  backend_dev_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
