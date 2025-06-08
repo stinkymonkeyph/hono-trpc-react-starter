@@ -32,6 +32,8 @@ hono-react-trpc-starter/
 │       │   ├── main.tsx         # React entry point
 │       │   └── index.css        # Tailwind styles
 │       ├── package.json
+│       ├── tailwind.config.js
+│       ├── postcss.config.js
 │       └── vite.config.ts
 └── README.md
 ```
@@ -180,7 +182,123 @@ cd packages/backend
 npx prisma studio
 ```
 
-## 🔧 Configuration
+## 🐳 Docker Deployment
+
+This project includes Docker configurations for easy deployment.
+
+### Prerequisites for Docker
+
+- **Docker** 20.10+
+- **Docker Compose** 2.0+ (or `docker-compose`)
+
+### Quick Docker Deployment
+
+**Deploy with one command:**
+```bash
+./scripts/deploy.sh
+```
+
+This will:
+- Build both backend and frontend Docker images
+- Start all services with proper networking
+- Set up the database automatically
+- Run health checks
+
+**Access your application:**
+- Frontend: `http://localhost` (port 80)
+- Backend: `http://localhost:3001`
+- Health check: `http://localhost:3001/health`
+
+### Manual Docker Commands
+
+```bash
+# Build and start all services
+docker compose up -d --build
+
+# View logs
+docker compose logs -f
+
+# Stop all services
+docker compose down
+
+# Rebuild specific service
+docker compose build backend --no-cache
+docker compose build frontend --no-cache
+```
+
+### Docker Services
+
+| Service | Container | Port | Description |
+|---------|-----------|------|-------------|
+| **Backend** | `hono-backend` | 3001 | Node.js API server |
+| **Frontend** | `react-frontend` | 80 | Nginx static files |
+
+### Production Deployment
+
+The Docker setup is production-ready with:
+
+- ✅ **Multi-stage builds** - Optimized image sizes
+- ✅ **Non-root users** - Security best practices  
+- ✅ **Health checks** - Automatic service monitoring
+- ✅ **SSL support** - OpenSSL libraries for Prisma
+- ✅ **Nginx optimization** - Gzip, caching, security headers
+- ✅ **Database persistence** - Data survives container restarts
+
+### Deployment Scripts
+
+```bash
+# Deploy production environment
+./scripts/deploy.sh
+
+# Deploy development environment (with hot reload)
+./scripts/deploy-dev.sh
+```
+
+### Environment Variables for Docker
+
+Create `.env` files for environment-specific configuration:
+
+**Backend environment (`packages/backend/.env`):**
+```env
+DATABASE_URL="file:./dev.db"
+PORT=3001
+NODE_ENV=production
+```
+
+### Scaling and Production Considerations
+
+**For production deployment:**
+
+1. **Use a production database:**
+   ```env
+   DATABASE_URL="postgresql://user:password@host:5432/dbname"
+   ```
+
+2. **Set up reverse proxy:**
+   - Use nginx or Traefik for SSL termination
+   - Configure domain routing
+
+3. **Add monitoring:**
+   - Health check endpoints are included
+   - Add logging aggregation (ELK stack, etc.)
+
+4. **Security:**
+   - Change default ports
+   - Add firewall rules
+   - Use secrets management
+
+### Docker Compose Profiles
+
+```bash
+# Development with hot reload
+docker compose -f docker-compose.dev.yml up -d
+
+# Production optimized
+docker compose up -d
+
+# With additional services (database, redis, etc.)
+docker compose --profile full up -d
+```
 
 ### Environment Variables
 
