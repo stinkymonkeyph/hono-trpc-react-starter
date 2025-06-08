@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { trpc } from './lib/trpc'
-import { type User } from '@starter/shared/src/index.js';
+import type { User } from './types/api';
 
 function App() {
   const [email, setEmail] = useState('')

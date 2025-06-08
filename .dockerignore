@@ -1,0 +1,30 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.env
+.nyc_output
+coverage
+.npm
+.eslintcache
+.next
+out
+build
+dist
+
+# Ignore development files
+packages/*/node_modules
+packages/*/.env
+packages/*/npm-debug.log
+packages/backend/prisma/dev.db*
+packages/web/dist
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

@@ -10,7 +10,7 @@ const app = new Hono()
 
 app.use('*', logger())
 app.use('*', cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'],
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:80', 'http://localhost'],
   credentials: true,
 }))
 

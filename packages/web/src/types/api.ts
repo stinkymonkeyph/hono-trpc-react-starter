@@ -17,53 +17,20 @@ export interface Post {
   updatedAt: string
 }
 
-export type AppRouter = {
+export interface AppRouter {
   user: {
-    create: {
-      input: { email: string; name?: string }
-      output: User
-    }
-    getAll: {
-      input: void
-      output: User[]
-    }
-    getById: {
-      input: { id: string }
-      output: User
-    }
-    update: {
-      input: { id: string; email?: string; name?: string }
-      output: User
-    }
-    delete: {
-      input: { id: string }
-      output: User
-    }
+    getAll: () => Promise<User[]>
+    create: (input: { email: string; name: string }) => Promise<User>
+    getById: (input: { id: string }) => Promise<User>
+    update: (input: { id: string; email?: string; name?: string }) => Promise<User>
+    delete: (input: { id: string }) => Promise<User>
   }
   post: {
-    create: {
-      input: { title: string; content?: string; authorId: string; published?: boolean }
-      output: Post
-    }
-    getAll: {
-      input: { published?: boolean }
-      output: Post[]
-    }
-    getById: {
-      input: { id: string }
-      output: Post
-    }
-    update: {
-      input: { id: string; title?: string; content?: string; published?: boolean }
-      output: Post
-    }
-    delete: {
-      input: { id: string }
-      output: Post
-    }
-    publish: {
-      input: { id: string }
-      output: Post
-    }
+    getAll: (input?: { published?: boolean }) => Promise<Post[]>
+    create: (input: { title: string; content?: string; authorId: string; published?: boolean }) => Promise<Post>
+    getById: (input: { id: string }) => Promise<Post>
+    update: (input: { id: string; title?: string; content?: string; published?: boolean }) => Promise<Post>
+    delete: (input: { id: string }) => Promise<Post>
+    publish: (input: { id: string }) => Promise<Post>
   }
 }
